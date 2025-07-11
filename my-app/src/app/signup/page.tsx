@@ -29,7 +29,7 @@ export default function Signup() {
 	
 	// create a function to handle the onClick event of the button
 	async function handleSignup() {
-        console.log(user)
+        console.log("User", user)
         try {
             const response = await axios.post(
                 "http://localhost:5007/users/signup",

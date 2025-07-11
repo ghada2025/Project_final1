@@ -7,6 +7,8 @@ import { userRouter } from "./routers/users.js";
 import { productRouter } from "./routers/products.js";
 import { orderRouter } from "./routers/orders.js";
 import cookieParser from "cookie-parser";
+import { discountRouter } from "./routers/discount.js";
+import { shippingRouter } from "./routers/shipping.js";
 
 const app = express();
 
@@ -19,7 +21,7 @@ app.use(helmet());
 // ✅ Middleware CORS
 app.use(cors(
     {
-        origin: "http://localhost:3001",
+        origin: "http://localhost:3000",
         credentials: true,
         optionsSuccessStatus: 200,
     }
@@ -35,6 +37,8 @@ app.use(express.static("public"));
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRouter);
+app.use("/discounts", discountRouter);
+app.use("/shipping", shippingRouter);
 
 // 🏓 Route de test pour vérifier si le serveur fonctionne
 app.get("/ping", (req, res) => {

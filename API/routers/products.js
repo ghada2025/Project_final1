@@ -1,17 +1,35 @@
 import express from "express";
-import { createProduct, deleteProduct, getBestProducts, getBrands, getName, getProduct, getProducts, updateProduct } from "../controllers/products.js";
+import {
+    createProduct,
+    deleteProduct,
+    getBestProducts,
+    getBrands,
+    getColors,
+    getdiscountedProducts,
+    getHotDeals,
+    getNewArrival,
+    getProduct,
+    getProducts,
+    updateProduct
+} from "../controllers/products.js";
+
 import { verifyIfAdmin } from "../middleware/verifyIfAdmin.js";
 
-
 const router = express.Router();
-router.get("/", getProducts);
-router.get("/bestsellers", getBestProducts);
-router.get("/brands" , getBrands);
-router.get("/name" , getName);
-router.get("/:id", getProduct);
-router.post("/", createProduct); // verify if admin
-router.put("/:id", verifyIfAdmin, updateProduct); // verify if admin
-router.delete("/:id", verifyIfAdmin, deleteProduct); //verify if admin
 
-// GET 6 BEST Sellers -> sort by countSold + limit 6
+// 📦 Produits publics
+router.get("/bestsellers", getBestProducts);
+router.get("/discounted", getdiscountedProducts);
+router.get("/hotDeals", getHotDeals);
+router.get("/newArrival", getNewArrival);
+router.get("/brands", getBrands);
+router.get("/colors", getColors);
+router.get("/", getProducts);
+router.get("/:id", getProduct);
+
+// 🔒 Produits côté admin
+router.post("/", verifyIfAdmin, createProduct);
+router.put("/:id", verifyIfAdmin, updateProduct);
+router.delete("/:id", verifyIfAdmin, deleteProduct);
+
 export { router as productRouter };

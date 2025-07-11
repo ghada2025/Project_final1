@@ -1,4 +1,36 @@
+"use client"
+import { useEffect, useState } from "react"
+
+type discount = {
+    _id: number;
+    name: string;
+    title: string;
+    color: string;
+    size: string;
+    description: string;
+    price: number;
+    soldcount: number;
+    stockQuantity: number;
+    images: [{
+        url: string;
+        alt: string;
+        main: boolean
+    }];
+    category: string;
+    brand: string;
+    discount: number;
+    priceAfterDiscount: number;
+}
 export function Hero() {
+    const [discounted, setDiscounted] = useState([])
+    useEffect(() => {
+            async function fetchData() {
+                const data = await fetch ("http://localhost:5007/products/discounted")
+                const discounted =  await data.json()
+                setDiscounted(discounted)
+            }
+            fetchData()
+        },[])
     return (
         <section className="relative h-[350px] bg-[url('/herro.png')] bg-cover bg-center text-center py-20 px-6">
             <div className="absolute inset-0 bg-black/40"></div>
@@ -13,16 +45,18 @@ export function Hero() {
     
             {/* Produits */}
             <div className="z-10 flex justify-center gap-6 mt-10 ">
-                {[1, 2, 3].map((_, index) => (
-                    <div key={index} className="bg-gray-50 p-4 rounded-lg shadow-md w-50 h-50  translate-y-10"> 
-                        <div className="flex gap-2">
-                            <p className="text-gray-800 text-sm font-semibold text-justify">FS - Nike Air Max 270 React...</p>
-                            <p className="text-blue-500 text-sm font-bold">$299.43</p>
+                {discounted.map((discount: discount ) => (
+                    <div key={discount._id} className="bg-gray-50 p-4 rounded-lg shadow-md w-60 h-60  translate-y-10"> 
+                        <div className="flex gap-2 justify-center items-center">
+                            <div className="text-gray-800 text-sm font-semibold ">{discount.title}</div>
                         </div>
-                        <img src="/product.png" alt="product" className="w-full h-20 object-cover mt-2" />
+                        <div className="flex justify-center items-center w-50">
+                            <img src={discount.images[0].url} alt={discount.title} className=" h-32 mt-2" />
+                        </div>
                         <div className="flex gap-4 justify-center items-center mt-3 text-sm">
-                            <p className="text-gray-400 line-through">$534.33</p>
-                            <p className="text-red-500 font-bold">24% Off</p>
+                            <div className="text-blue-500 text-sm font-bold">${discount.priceAfterDiscount}</div>
+                            <p className="text-gray-400 line-through">${discount.price}</p>
+                            <p className="text-red-500 font-bold">{discount.discount} % Off</p>
                         </div>
                     </div>
                 ))}

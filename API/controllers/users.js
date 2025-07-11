@@ -2,10 +2,9 @@ import bcrypt from "bcrypt";
 import { User } from "../models/user.js";
 const MILILSECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
+// POST coté client 
 export async function Signup(req, res) {
     try {
-        console.log("Données reçues du frontend :", req.body);
-
         const { firstName, lastName, birthday, email, password, codePostal, wilaya, address, phoneNumber, role } = req.body;
 
         // Vérifie si l'email existe déjà
@@ -41,9 +40,7 @@ export async function Signup(req, res) {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
 }
-
-
-
+// POST coté client 
 export async function Signin(req, res) {
     try{
         const { email, password } = req.body
@@ -71,39 +68,32 @@ export async function Signin(req, res) {
         res.json({ message: "error in logging in client" })
     }
 }
-
-export async function getUserById(req, res) {
-    try {
-        const user = await User.findById(req.params.id)
-        res.json(user)
-    } catch (error) {
-        console.log(error)
-        res.json({ message: "error in getUserById controller" })
-    }
-}
-
-
+// GET coté client && coté admin /me 
 export async function getUserByIdFromCookies(req, res) {
     try {
+        console.log(req.cookies.user)
+        if (!req.cookies.user) {
+            return res.status(401).json({ message: "Unauthorized" })
+        }
         const user = await User.findById(req.cookies.user)
         res.json(user)
     } catch (error) {
         console.log(error)
         res.json({ message: "error in getUserById controller" })
     }
-    }
-
+}
+// GET coté admin
 export async function getUser(req, res) {
     try{
-        const {user} = req.cookies
-        const userExists = await User.findById(user).populate("orders")
+        const {id} = req.params
+        const userExists = await User.findById(id)
         res.status(200).json(userExists)
     } catch (error){
         console.log(error)
         res.json({ message: "error in getting client" })
     }
 }
-
+// GET coté admin
 export async function getAllUsers(req, res) {
     try{
         const users = await User.find()
@@ -113,18 +103,18 @@ export async function getAllUsers(req, res) {
         res.json({ message: "error in getting clients" })
     }
 }
-
+// PUT coté admin
 export async function updateUser(req, res) {
     try{
-        const { firstName, lastName, birthday, email, password, codePostal, wilaya, address, phoneNumber, role, orders } = req.body
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, { firstName, lastName, birthday, email, password, codePostal, wilaya, address, phoneNumber, role, orders }, { new: true })
+        const { firstName, lastName, birthday, email, codePostal, wilaya, address, phoneNumber, role, orders } = req.body
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, { firstName, lastName, birthday, email, codePostal, wilaya, address, phoneNumber, role, orders }, { new: true })
         res.status(200).json({ message: "Client updated successfully", data: updatedUser })
     } catch (error){
         console.log(error)
         res.json({ message: "error in updating client" })
     }
 }
-
+// DELETE coté admin
 export async function deleteUser(req, res) {
     try{
         await User.findByIdAndDelete(req.params.id)

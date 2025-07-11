@@ -3,9 +3,31 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Search, ShoppingCart, User, ChevronDown } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import axios from "axios";
 
 export function NavBar() {
     const [cart, setCart] = useState([]);
+
+    useEffect(() => {
+        async function fetchUser() {
+            try {
+            const response = await axios.get("http://localhost:5007/users/me", {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            });
+            const user = response.data;
+            console.log("user", user);
+            } catch (error) {
+            console.error(error);
+            }
+        }
+
+        fetchUser();
+    }, []); // ✅ tableau vide pour exécuter une seule fois
+
+
    // Fonction pour écouter les changements de localStorage
         const handleStorageChange = () => {
             const updatedCart = localStorage.getItem("cart");
@@ -76,7 +98,7 @@ export function NavBar() {
                 </div>
                 <div className="flex items-center space-x-2 cursor-pointer">
                     <User className="w-5 h-5 hover:text-orange-500" />
-                    <button className="hover:text-orange-500">My Profile</button>
+                    <button className="hover:text-orange-500">user</button>
                 </div>
             </div>
         </nav>

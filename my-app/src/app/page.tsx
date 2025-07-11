@@ -1,4 +1,6 @@
 import { Hero } from "@/components/Herro";
+import { NavBar } from "@/components/NavBar";
+import { NavBar2 } from "@/components/NavBar2";
 import { New } from "@/components/New";
 import { Heart, ShoppingCart } from "lucide-react";
 
@@ -12,20 +14,25 @@ type Product = {
   price: number;
   soldcount: number;
   stockQuantity: number;
-  image: string;
+  images: [{
+    url: string;
+    alt: string;
+    main: boolean
+  }];
   category: string;
   brand: string;
   discount: number;
+  priceAfterDiscount: number;
 };
 
 export default async function Home() {
   const data = await fetch("http://localhost:5007/products/bestsellers")
   const products = await data.json()
-  console.log(data)
   
   return (
     
         <>
+          <NavBar2 />
           <Hero />
           <section className="text-center mt-[200px]">
             <h2 className="text-2xl font-bold mb-8">BEST SELLER</h2>
@@ -33,19 +40,19 @@ export default async function Home() {
               {products.map((product: Product) => (
                 <div key={product._id} className="bg-white shadow-lg rounded-xl p-4 border max-w-[300px] max-h-[400px] ">
                   <div className="relative">
-                    <img src={product.image} alt={product.name} className="w-full rounded-lg"/>
+                    <img src={product.images[0].url} alt={product.title} className="w-full h-[250px] rounded-lg"/>
                     <div className="absolute top-2 right-2 flex space-x-2">
                       <span className="bg-white p-2 rounded-full shadow text-orange-500"><Heart color="#FF8540" /></span>
                       <span className="bg-white p-2 rounded-full shadow text-orange-500"><ShoppingCart color="#FF8540" /></span>
                     </div>
                   </div>
-                  <h3 className="font-bold mt-3">{product.name}</h3>
+                  <h3 className="font-bold mt-3">{product.title}</h3>
                   <div className="flex items-center justify-center my-2 text-yellow-400">
                     {"★".repeat(4)}{"☆".repeat(5 - 4)}
                   </div>
                   <p className="text-blue-600 font-bold text-lg">
-                    ${Math.floor(product.price * product.discount)} <span className="text-gray-400 line-through mx-2">${product.price}</span>{" "}
-                    <span className="text-red-500 text-sm">{product.discount * 100 } % OFF</span>
+                    ${product.priceAfterDiscount} <span className="text-gray-400 line-through mx-2">${product.price}</span>{" "}
+                    <span className="text-red-500 text-sm">{product.discount} % OFF</span>
                   </p>
                 </div>
               ))}

@@ -1,23 +1,24 @@
 "use client"
+import { NavBar } from "@/components/NavBar";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 
 type Product = {
-    _id: string,
-    name: string,
-    title: string,
-    color: string[],
-    size: string[],
-    description: string,
-    price: number,
-    soldcount: number,
-    stockQuantity: number,
-    image: string,
-    category: string,
-    brand: string,
-    discount: number
+    _id: number;
+    title: string;
+    color: string;
+    size: string;
+    description: string;
+    price: number;
+    soldcount: number;
+    stockQuantity: number;
+    images: string;
+    category: string;
+    brand: string;
+    discount: number;
+    priceAfterDiscount: number;
+    url: string;
 }
 
 export default function Page() {
@@ -25,13 +26,13 @@ export default function Page() {
     const [product, setProduct] = useState<Product | null>(null);
     const [quantity, setQuantity] = useState(1); 
     const [cart, setCart] = useState<Product[]>([]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     useEffect(() => {
         async function fetchProduct() {
-            const response = await fetch(`http://localhost:5000/products/${id}`)
+            const response = await fetch(`http://localhost:5007/products/${id}`)
             const product = await response.json()
-            setProduct(product) 
-            console.log(product)           
+            setProduct(product)         
         }
         fetchProduct()
     }, []);
@@ -64,6 +65,7 @@ export default function Page() {
     }
     return (
         <div>
+            <NavBar />
             {/* Breadcrumb */}
             <div className="bg-gray-50">
                 <ul className="container text-[12px] flex flex-row space-x-5 justify-center mb-7 py-3 font-semibold">
@@ -76,20 +78,32 @@ export default function Page() {
             <div key={product?._id} className="container justify-center p-5 flex flex-row gap-4 ">
                     {/* Product Image */}
                     <div className="flex flex-col">
-                        {/* Product Image big */}
+                        {/* Grande image */}
                         <div>
-                            <img src={product?.image} alt={product?.name} className="w-80  h-80 "/>
+                            <img
+                            src={product.images[selectedIndex].url}
+                            alt={product.title}
+                            className="w-80 h-80 object-cover rounded-xl border"
+                            />
                         </div>
-                        {/* Product Image small */}
+                        {/* Petites images */}
                         <div className="flex justify-between gap-3 mt-4">
-                            <img src={product?.image} alt={product?.name} className="w-20 h-20 border rounded-lg cursor-pointer"/>
-                            <img src={product?.image} alt={product?.name} className="w-20 h-20 border rounded-lg cursor-pointer opacity-50"/>
-                            <img src={product?.image} alt={product?.name} className="w-20 h-20 border rounded-lg cursor-pointer opacity-50"/>
+                            {product.images.map((img: string, index: number) => (
+                            <img
+                                key={index}
+                                src={img.url}
+                                alt={`${product.title} ${index}`}
+                                onClick={() => setSelectedIndex(index)}
+                                className={`w-20 h-20 rounded-lg cursor-pointer border transition duration-200 ${
+                                selectedIndex === index ? "opacity-100 border-yellow-500" : "opacity-50"
+                                }`}
+                            />
+                            ))}
                         </div>
                     </div>
                     {/* Product Details */}
                     <div>
-                        <h2 className="text-2xl font-semibold">{product?.name}</h2>
+                        <h2 className="text-2xl font-semibold">{product?.title}</h2>
                         {/* Rating */}
                         <div className="flex items-center gap-3 mt-2 text-yellow-500 pb-6 border-b-2 border-gray-100">
                             ⭐⭐⭐⭐⭐ <span className="text-gray-300 text-sm">0 reviews</span> 
@@ -97,14 +111,14 @@ export default function Page() {
                         </div>
                         {/* Price */}
                         <div className="mt-4 text-xl font-bold text-blue-600 flex items-center gap-2.5 mb-3.5">
-                            ${Math.floor(product?.price! * product?.discount!)} <span className="text-gray-400 line-through text-sm mx-2">${product?.price!}</span>
-                            <span className="text-red-500 text-sm">{product?.discount! * 100}% Off</span>
+                            ${product.priceAfterDiscount} <span className="text-gray-400 line-through text-sm mx-2">${product?.price!}</span>
+                            <span className="text-red-500 text-sm">{product?.discount!}% Off</span>
                         </div>
                         {/* Description */}
                         <div className="flex flex-col gap-3.5 pb-6 border-b-2 border-gray-100">
                             <p className="text-gray-600 mt-2 flex gap-10">Availability: <span className="text-green-500">{product?.stockQuantity}</span></p>
                             <p className="text-gray-600 flex gap-10">Category:<span> {product?.category}</span></p>
-                            <p className="text-gray-600 ">{product?.brand}</p>
+                            <p className="text-gray-600 font-bold ">{product?.brand}</p>
                         </div>
                         {/* Color */}
                         <div className="mt-4 flex items-center gap-10">

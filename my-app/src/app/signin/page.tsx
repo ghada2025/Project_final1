@@ -35,7 +35,7 @@ const LoginForm = () => {
             <div className="bg-white flex shadow-lg rounded-xl overflow-hidden max-w-4xl w-full">
                 {/* Left Side - Form */}
                 <div className="w-1/2 p-10 flex flex-col justify-center">
-                    <h2 className="text-3xl font-semibold text-gray-700 mb-6">Log In</h2>
+                    <h2 className="text-3xl font-semibold text-gray-700 mb-6">Sign In</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Email Input */}
                         <div className="flex items-center border rounded-lg p-2 bg-gray-50">
@@ -60,7 +60,7 @@ const LoginForm = () => {
                             </button>
                         
                         <p className="text-center text-sm text-gray-500">
-                            Don’t have an account?<Link href={"/signup"} className="text-orange-500 hover:underline">Sign Up</Link> 
+                            Don’t have an account?<Link href={"/signup"} className="text-orange-500 hover:underline ml-2">Sign Up</Link> 
                         </p>
                     </form>
                 </div>

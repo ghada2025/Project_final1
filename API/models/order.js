@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },    
+    user : { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    wilaya: { type: String, required: true }, 
+    type: { type: String, enum: ["home", "office"], required: true },   
     address: { type: String, required: true },
-    phoneNumber: { type: Number, required: true },
+    phoneNumber: {  type: String, required: true },
     products: [{ 
         quantity: Number,
         product: {
         type: mongoose.Schema.Types.ObjectId, ref: "Product"
         }
     }],
-    shipping: { type:mongoose.Schema.Types.ObjectId, ref: "Shipping" },
     status: { type: String, enum: ["pending", "done", "rejected"], default: "pending" },
+    totalPrice: { type: Number, required: true },
     discount: { type: mongoose.Schema.Types.ObjectId, ref: "Discount" },
 }, { timestamps: true });   
 
